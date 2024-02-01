@@ -1,0 +1,477 @@
+{
+	"info": {
+		"_postman_id": "2ebaabea-e758-43ec-8b01-37bc2abc7213",
+		"name": "1_signup",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2699813"
+	},
+	"item": [
+		{
+			"name": "signup - success",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"function firstName() {\r",
+							"\r",
+							"    let firstName = [\"William\", \"João\", \"Maria\", \"Pablo\", \"Mithras\", \"Karla\", \"Yasmin\", \"Raissa\", \"Liza\", \"Rodrigo\", \"Adriano\", \"Gledson\"];\r",
+							"    let randomItem = firstName[Math.floor(Math.random() * firstName.length)];\r",
+							"\r",
+							"    return randomItem\r",
+							"}\r",
+							"\r",
+							"pm.environment.set(\"FirstName\", firstName());\r",
+							"\r",
+							"function lastName() {\r",
+							"\r",
+							"    let lastName = [\"Alves de Souza\", \"Silva Santos\", \"Alves da Silva\", \"de Souza\", \"Henrique de Lima\", \"Joaquim de Carvalho\"];\r",
+							"    let randomItem = lastName[Math.floor(Math.random() * lastName.length)];\r",
+							"\r",
+							"    return randomItem\r",
+							"}\r",
+							"\r",
+							"pm.environment.set(\"LastName\", lastName());\r",
+							"\r",
+							"pm.environment.set(\"FullName\", pm.environment.get(\"FirstName\") + \" \" + pm.environment.get(\"LastName\"));\r",
+							"\r",
+							"function accessProfile() {\r",
+							"\r",
+							"    let accessProfile = [\"ADMIN\", \"FINANCEIRO\", \"ADMINISTRATIVO\", \"TI\", \"CONTROLADORIA\"];\r",
+							"    let randomItem = accessProfile[Math.floor(Math.random() * accessProfile.length)];\r",
+							"\r",
+							"    return randomItem\r",
+							"}\r",
+							"\r",
+							"pm.environment.set(\"AccessProfile\", accessProfile());\r",
+							"\r",
+							"function providerMail() {\r",
+							"\r",
+							"    let providerMail = [\"@yahoo.com.br\", \"@gmail.com\", \"@outlook.com\", \"@hotmail.com\", \"@uol.com.br\"];\r",
+							"    let randomItem = providerMail[Math.floor(Math.random() * providerMail.length)];\r",
+							"\r",
+							"    return randomItem\r",
+							"}\r",
+							"\r",
+							"pm.environment.set(\"ProviderMail\", providerMail());\r",
+							"\r",
+							"pm.environment.set(\"Mail\", pm.environment.get(\"FirstName\") + \"_\" + pm.variables.replaceIn('{{$guid}}') + pm.environment.get(\"ProviderMail\"))\r",
+							"\r",
+							"pm.variables.set(\"_Password\", pm.globals.get(\"Password\"))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check is token exist\", function(){\r",
+							"   pm.expect(JSON.parse(responseBody).token).to.exist;\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Check is fullName true\", function(){\r",
+							"   pm.expect(pm.environment.get(\"FullName\")).to.eql(JSON.parse(responseBody).user.fullName);\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Check is mail true\", function(){\r",
+							"   pm.expect(pm.environment.get(\"Mail\")).to.eql(JSON.parse(responseBody).user.mail);\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Check is accessProfile true\", function(){\r",
+							"   pm.expect(pm.environment.get(\"AccessProfile\")).to.eql(JSON.parse(responseBody).user.accessProfile);\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Check is status true\", function(){\r",
+							"   pm.expect(true).to.eql(JSON.parse(responseBody).user.status);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"fullName\": \"{{FullName}}\",\r\n    \"mail\": \"{{Mail}}\",\r\n    \"password\": \"{{_Password}}\",\r\n    \"confirmPassword\": \"{{_Password}}\",\r\n    \"accessProfile\": \"{{AccessProfile}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/signup",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "signup-mock - success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fullName\": \"Gledson Alves de Souza\",\r\n    \"mail\": \"Gledson_a0166433-474c-4b21-9f3f-7039cae472f1@outlook.com\",\r\n    \"password\": \"1234@Test\",\r\n    \"confirmPassword\": \"1234@Test\",\r\n    \"accessProfile\": \"ADMIN\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/signup-01",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"signup-01"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.18.0 (Ubuntu)"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 13 Nov 2023 19:27:17 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "Access-Control-Allow-Methods",
+							"value": "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+						},
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"47c-/rZxUWowmdxvGyaxO8oJQdrz0ZY\""
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"user\": {\n        \"_id\": \"65527895a946af8d2e31c143\",\n        \"registration\": \"QaCoders-000567\",\n        \"fullName\": \"Gledson Alves de Souza\",\n        \"mail\": \"Gledson_a0166433-474c-4b21-9f3f-7039cae472f1@outlook.com\",\n        \"password\": \"$2b$10$9daJrHC6inGS1u1XLDeSG.HAOt9ePV5UNLVtwKFWBFiHga6axuMOi\",\n        \"accessProfile\": \"ADMIN\",\n        \"idCompany\": \"\",\n        \"status\": true,\n        \"audit\": [\n            {\n                \"registrationDate\": \"Mon Nov 13 2023 16:27:17 GMT-0300 (Brasilia Standard Time)\",\n                \"_id\": \"65527895a946af8d2e31c144\"\n            }\n        ],\n        \"__v\": 0\n    },\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTUyNzg5NWE5NDZhZjhkMmUzMWMxNDMiLCJyZWdpc3RyYXRpb24iOiJRYUNvZGVycy0wMDA1NjciLCJmdWxsTmFtZSI6IkdsZWRzb24gQWx2ZXMgZGUgU291emEiLCJtYWlsIjoiR2xlZHNvbl9hMDE2NjQzMy00NzRjLTRiMjEtOWYzZi03MDM5Y2FlNDcyZjFAb3V0bG9vay5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCQ5ZGFKckhDNmluR1MxdTFYTERlU0cuSEFPdDllUFY1VU5MVnR3S0ZXQkZpSGdhNmF4dU1PaSIsImFjY2Vzc1Byb2ZpbGUiOiJBRE1JTiIsImlkQ29tcGFueSI6IiIsInN0YXR1cyI6dHJ1ZSwiYXVkaXQiOlt7InJlZ2lzdHJhdGlvbkRhdGUiOiJNb24gTm92IDEzIDIwMjMgMTY6Mjc6MTcgR01ULTAzMDAgKEJyYXNpbGlhIFN0YW5kYXJkIFRpbWUpIiwiX2lkIjoiNjU1Mjc4OTVhOTQ2YWY4ZDJlMzFjMTQ0In1dLCJfX3YiOjAsImlhdCI6MTY5OTkwMzYzNywiZXhwIjoxNjk5OTkwMDM3fQ.-qtgkrYQh8zTbOC1X8p-AE9tJht_7RvbRXCUd7WZTOQ\"\n}"
+				}
+			]
+		},
+		{
+			"name": "signup - fullName is required",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"function providerMail() {\r",
+							"\r",
+							"    let providerMail = [\"@yahoo.com.br\", \"@gmail.com\", \"@outlook.com\", \"@hotmail.com\", \"@uol.com.br\"];\r",
+							"    let randomItem = providerMail[Math.floor(Math.random() * providerMail.length)];\r",
+							"\r",
+							"    return randomItem\r",
+							"}\r",
+							"\r",
+							"pm.environment.set(\"ProviderMail\", providerMail());\r",
+							"\r",
+							"pm.environment.set(\"Mail\", pm.environment.get(\"FirstName\") + \"_\" + pm.variables.replaceIn('{{$guid}}') + pm.environment.get(\"ProviderMail\"))\r",
+							"\r",
+							"pm.variables.set(\"_Password\", pm.globals.get(\"Password\"))\r",
+							"\r",
+							"pm.environment.set(\"_MsgFullNameRequerid\", pm.globals.get(\"MsgFullNameRequerid\"))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check msg: O campo 'fullName' é obrigatório.\", function(){\r",
+							"   pm.expect(pm.environment.get(\"_MsgFullNameRequerid\")).to.eql(JSON.parse(responseBody).errors[0]);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"fullName\": \"\",\r\n    \"mail\": \"{{Mail}}\",\r\n    \"password\": \"{{_Password}}\",\r\n    \"confirmPassword\": \"{{_Password}}\",\r\n    \"accessProfile\": \"{{AccessProfile}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/signup",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "signup - fullName is required",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fullName\": \"\",\r\n    \"mail\": \"Gledson_a0166433-474c-4b21-9f3f-7039cae472f1@outlook.com\",\r\n    \"password\": \"1234@Test\",\r\n    \"confirmPassword\": \"1234@Test\",\r\n    \"accessProfile\": \"ADMIN\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/signup-02",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"signup-02"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.18.0 (Ubuntu)"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 13 Nov 2023 19:29:11 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "50"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "Access-Control-Allow-Methods",
+							"value": "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+						},
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"32-t66msvj3Kw/QLFBeVlwv04nzTdQ\""
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"errors\": [\n        \"O campo 'fullName' é obrigatório.\"\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "signup - mail is required",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"function providerMail() {\r",
+							"\r",
+							"    let providerMail = [\"@yahoo.com.br\", \"@gmail.com\", \"@outlook.com\", \"@hotmail.com\", \"@uol.com.br\"];\r",
+							"    let randomItem = providerMail[Math.floor(Math.random() * providerMail.length)];\r",
+							"\r",
+							"    return randomItem\r",
+							"}\r",
+							"\r",
+							"pm.environment.set(\"ProviderMail\", providerMail());\r",
+							"\r",
+							"pm.environment.set(\"Mail\", pm.environment.get(\"FirstName\") + \"_\" + pm.variables.replaceIn('{{$guid}}') + pm.environment.get(\"ProviderMail\"))\r",
+							"\r",
+							"pm.variables.set(\"_Password\", pm.globals.get(\"Password\"))\r",
+							"\r",
+							"pm.environment.set(\"_MsgMailRequerid\", pm.globals.get(\"_MsgMailRequerid\"))"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check msg: O campo 'Mail' é obrigatório.\", function(){\r",
+							"   pm.expect(pm.environment.get(\"_MsgMailRequerid\")).to.eql(JSON.parse(responseBody).alert[0]);\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"fullName\": \"{{FullName}}\",\r\n    \"mail\": \"\",\r\n    \"password\": \"{{_Password}}\",\r\n    \"confirmPassword\": \"{{_Password}}\",\r\n    \"accessProfile\": \"{{AccessProfile}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/signup",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "signup - fullName is required",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fullName\": \"\",\r\n    \"mail\": \"Gledson_a0166433-474c-4b21-9f3f-7039cae472f1@outlook.com\",\r\n    \"password\": \"1234@Test\",\r\n    \"confirmPassword\": \"1234@Test\",\r\n    \"accessProfile\": \"ADMIN\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/signup-02",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"signup-02"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx/1.18.0 (Ubuntu)"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 13 Nov 2023 19:29:11 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "50"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "Access-Control-Allow-Methods",
+							"value": "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+						},
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"32-t66msvj3Kw/QLFBeVlwv04nzTdQ\""
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"errors\": [\n        \"O campo 'fullName' é obrigatório.\"\n    ]\n}"
+				}
+			]
+		}
+	]
+}
